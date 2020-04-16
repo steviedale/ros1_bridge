@@ -41,13 +41,32 @@ int main(int argc, char * argv[])
   auto ros2_node = rclcpp::Node::make_shared("ros_bridge");
 
   // bridge one example topic
-  std::string topic_name = "chatter";
-  std::string ros1_type_name = "std_msgs/String";
-  std::string ros2_type_name = "std_msgs/msg/String";
+  std::string topic_name = "iiwa/joint_states";
+  std::string ros1_type_name = "sensor_msgs/JointState";
+  std::string ros2_type_name = "sensor_msgs/msg/JointState";
   size_t queue_size = 10;
 
   auto handles = ros1_bridge::create_bidirectional_bridge(
     ros1_node, ros2_node, ros1_type_name, ros2_type_name, topic_name, queue_size);
+
+//  auto handles_srv = ros1_bridge::create_bidirectional_bridge(
+//    ros1_node, ros2_node, "iiwa_msgs/SetEndpointFrame", "iiwa_msgs/srv/SetEndpointFrame"," /iiwa/configuration/setEndpointFrame", 10);
+
+  // create bridges for ros1 services
+  auto request_data_relay_2to1_factory = ros1_bridge::get_service_factory(
+    "ros1", "iiwa_msgs", "SetEndpointFrame");
+  if (request_data_relay_2to1_factory) {
+    try {
+      ros1_bridge::ServiceBridge2to1 request_data_relay_2to1 = request_data_relay_2to1_factory->service_bridge_2_to_1(ros1_node, ros2_node, "/iiwa/configuration/setEndpointFrame");
+      printf("Created 2 to 1 bridge for service %s\n", "/iiwa/configuration/setEndpointFrame\n");
+    } catch (std::runtime_error & e) {
+      fprintf(stderr, "Failed to created a bridge: %s\n", "/iiwa/configuration/setEndpointFrame\n");
+    }
+  }
+  else
+  {
+      printf("NOPE\n");
+  }
 
   // ROS 1 asynchronous spinner
   ros::AsyncSpinner async_spinner(1);

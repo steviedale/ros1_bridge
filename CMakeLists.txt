@@ -16,6 +16,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rmw_implementation_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(iiwa_msgs REQUIRED)
 
 # find ROS 1 packages
 set(cmake_extras_files cmake/find_ros1_package.cmake cmake/find_ros1_interface_packages.cmake)
@@ -251,20 +252,20 @@ macro(targets)
     TIMEOUT 60)
 endmacro()
 
-if(TEST_ROS1_BRIDGE)
-  find_package(launch_testing_ament_cmake REQUIRED)
-
-  add_executable(test_ros1_client "test/test_ros1_client.cpp")
-  ament_target_dependencies(test_ros1_client "ros1_diagnostic_msgs" "ros1_roscpp")
-  add_executable(test_ros1_server "test/test_ros1_server.cpp")
-  ament_target_dependencies(test_ros1_server "ros1_diagnostic_msgs" "ros1_roscpp")
-  set(TEST_BRIDGE_ROS1_ENV "${ros1_roslaunch_PREFIX}/env.sh")
-  set(TEST_BRIDGE_ROSCORE "${ros1_roslaunch_PREFIX}/bin/roscore")
-  set(TEST_BRIDGE_ROS1_CLIENT "$<TARGET_FILE:test_ros1_client>")
-  set(TEST_BRIDGE_ROS1_SERVER "$<TARGET_FILE:test_ros1_server>")
-
-  call_for_each_rmw_implementation(targets)
-endif()
+#if(TEST_ROS1_BRIDGE)
+#  find_package(launch_testing_ament_cmake REQUIRED)
+#
+#  add_executable(test_ros1_client "test/test_ros1_client.cpp")
+#  ament_target_dependencies(test_ros1_client "ros1_diagnostic_msgs" "ros1_roscpp")
+#  add_executable(test_ros1_server "test/test_ros1_server.cpp")
+#  ament_target_dependencies(test_ros1_server "ros1_diagnostic_msgs" "ros1_roscpp")
+#  set(TEST_BRIDGE_ROS1_ENV "${ros1_roslaunch_PREFIX}/env.sh")
+#  set(TEST_BRIDGE_ROSCORE "${ros1_roslaunch_PREFIX}/bin/roscore")
+#  set(TEST_BRIDGE_ROS1_CLIENT "$<TARGET_FILE:test_ros1_client>")
+#  set(TEST_BRIDGE_ROS1_SERVER "$<TARGET_FILE:test_ros1_server>")
+#
+#  call_for_each_rmw_implementation(targets)
+#endif()
 
 install(
   PROGRAMS bin/ros1_bridge_generate_factories
